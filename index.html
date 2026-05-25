@@ -141,7 +141,7 @@
     </section>
 
     <script>
-        // 🚀 URL API synchronisée de manière définitive avec ton application web Google Apps Script
+        // URL API définitivement liée
         const API_URL = "https://script.google.com/macros/s/AKfycbzJrlQfLTS1ghQOIiorC69aQHJDeoonfyMAgdyNKoXGgClcQ6ze4SRNlClTFXV-7m5qFQ/exec";
 
         function showToast(message, isSuccess = true) {
@@ -326,7 +326,7 @@
             });
         }
 
-        // Sécurisation basique de l'interface du terminal
+        // Sécurisation de l'interface
         document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
         document.addEventListener('keydown', function(e) {
             if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && e.keyCode === 73) || (e.ctrlKey && e.keyCode === 85)) {
