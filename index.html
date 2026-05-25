@@ -7,7 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafc; 
+            -webkit-user-select: none; /* Désactive la sélection de texte */
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
         .hidden-section { display: none !important; }
         .toast { transition: opacity 0.3s ease, transform 0.3s ease; }
     </style>
@@ -16,16 +23,17 @@
 
     <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-sm pointer-events-none"></div>
 
+    <!-- SECTION 1 : LOGIN -->
     <section id="sec-login" class="min-h-screen flex flex-col items-center justify-center p-4">
         <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-6 text-center">
             <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">O</div>
             <h1 class="text-2xl font-bold text-slate-900 mb-2">OptiSchool</h1>
             <p class="text-sm text-slate-500 mb-6">Entrez le code d'accès de l'établissement pour continuer.</p>
-            
+                        
             <form onsubmit="verifierMotDePasse(event)" class="space-y-4">
                 <div>
-                    <input type="password" id="input-password" required placeholder="••••••••" 
-                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-center font-mono text-xl tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                    <input type="password" id="input-password" required placeholder="••••" maxlength="4" inputmode="numeric" pattern="[0-9]*"
+                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-center font-mono text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
                 </div>
                 <button type="submit" id="btn-login" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-lg shadow-blue-500/10">
                     Se connecter
@@ -34,12 +42,13 @@
         </div>
     </section>
 
+    <!-- SECTION 2 : DASHBOARD -->
     <section id="sec-dashboard" class="min-h-screen hidden-section p-4 max-w-md mx-auto flex flex-col justify-center">
         <div class="text-center mb-8">
             <h2 class="text-2xl font-bold text-slate-900">Bienvenue sur OptiSchool</h2>
             <p class="text-sm text-slate-500 mt-1">Sélectionnez votre espace d'utilisation</p>
         </div>
-        
+                
         <div class="space-y-4">
             <button onclick="basculerVers('sec-borne')" class="w-full bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-4 text-left active:scale-[0.98] transition-all">
                 <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl text-xl">🛡️</div>
@@ -59,6 +68,7 @@
         </div>
     </section>
 
+    <!-- SECTION 3 : BORNE GUÉRITE (MODIFIÉE) -->
     <section id="sec-borne" class="min-h-screen hidden-section p-4 max-w-md mx-auto flex flex-col">
         <div class="flex items-center justify-between py-4 border-b border-slate-100 mb-6">
             <button onclick="basculerVers('sec-dashboard')" class="text-sm font-medium text-slate-500 hover:text-slate-800">← Menu Principal</button>
@@ -72,7 +82,14 @@
                 <p class="text-xs text-slate-500 mt-1">Saisissez le matricule de l'élève qui se présente.</p>
             </div>
 
-            <form onsubmit="soumettrePointage(event)" class="my-8 space-y-4">
+            <!-- CADRE D'AFFICHAGE DU SCAN EN DIRECT -->
+            <div id="borne-feedback-box" class="hidden-section my-4 p-4 rounded-xl border border-emerald-100 bg-emerald-50/50 text-center animate-pulse">
+                <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Dernier scan validé</p>
+                <h4 id="borne-feedback-nom" class="text-lg font-bold text-slate-900 mt-1">-</h4>
+                <p id="borne-feedback-matricule" class="text-sm font-mono text-slate-600"></p>
+            </div>
+
+            <form onsubmit="soumettrePointage(event)" class="my-6 space-y-4">
                 <input type="text" id="matricule-input" required placeholder="Ex: MAT-001" 
                     class="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl text-center font-bold text-2xl tracking-wide uppercase focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                 <button type="submit" id="btn-valider-pointage" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-4 rounded-xl transition-all">
@@ -91,6 +108,7 @@
         </div>
     </section>
 
+    <!-- SECTION 4 : ESPACE PARENT -->
     <section id="sec-parent" class="min-h-screen hidden-section p-4 max-w-md mx-auto flex flex-col">
         <div class="flex items-center justify-between py-4 border-b border-slate-100 mb-6">
             <button onclick="basculerVers('sec-dashboard')" class="text-sm font-medium text-slate-500 hover:text-slate-800">← Menu Principal</button>
@@ -109,8 +127,8 @@
             <div class="text-4xl">🔒</div>
             <h3 class="text-lg font-bold text-rose-600">Accès Interrompu</h3>
             <p class="text-sm text-slate-500">L'abonnement mensuel pour le suivi de ce matricule est arrivé à échéance. Veuillez régulariser la situation.</p>
-            <a href="https://wa.me/243819679859?text=Bonjour%20OptiSchool,%20je%20souhaite%20r%C3%A9gulariser%20l'abonnement%20de%20mon%20enfant." target="_blank" 
-               class="inline-block w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition-all">
+            <a href="https://wa.me/243819679859?text=Bonjour%20OptiSchool,%20je%20souhaite%20r%C3%A9gulariser%20l'abonnement%20de%20mon%20enfant." target="_blank"
+                class="inline-block w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition-all">
                 🟢 Régulariser via WhatsApp
             </a>
         </div>
@@ -138,10 +156,10 @@
     </section>
 
     <script>
-        // 🔗 URL de ton dernier déploiement Google Apps Script avec CORS
+        // 🔗 URL de ton déploiement Google Apps Script
         const API_URL = "https://script.google.com/macros/s/AKfycbwRN9h76Okbc6WesKngTUuG4NkinoKZuhvlqB9yBBo6hY1GYn1pb6L3WaHwbInjhsxa/exec";
 
-        // Composant d'alerte visuelle (Toasts)
+        // Toasts d'alerte visuelle
         function showToast(message, isSuccess = true) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -151,7 +169,7 @@
             setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-10px)'; setTimeout(() => toast.remove(), 300); }, 3500);
         }
 
-        // Système d'aiguillage des sections
+        // Navigation
         function basculerVers(idSection) {
             ['sec-login', 'sec-dashboard', 'sec-borne', 'sec-parent'].forEach(id => {
                 document.getElementById(id).classList.add('hidden-section');
@@ -159,60 +177,64 @@
             document.getElementById(idSection).classList.remove('hidden-section');
         }
 
-        /* 🔐 VERIFICATION DU MOT DE PASSE EN DIRECT */
+        /* 🔐 1. VÉRIFICATION DU MOT DE PASSE (LOCAL EN 6734) */
         function verifierMotDePasse(event) {
             event.preventDefault();
             const password = document.getElementById('input-password').value;
-            const btn = document.getElementById('btn-login');
-
-            btn.disabled = true;
-            btn.innerHTML = "Vérification...";
-
-            fetch(API_URL + `?action=login&pass=${encodeURIComponent(password)}`)
-            .then(res => {
-                if (!res.ok) throw new Error('Problème réseau');
-                return res.json();
-            })
-            .then(data => {
-                btn.disabled = false;
-                btn.innerHTML = "Se connecter";
-                if(data.authenticated) {
-                    showToast("Accès autorisé");
-                    basculerVers('sec-dashboard');
-                } else {
-                    showToast("Mot de passe incorrect", false);
-                }
-            })
-            .catch(() => {
-                btn.disabled = false;
-                btn.innerHTML = "Se connecter";
-                showToast("Erreur serveur. Assure-toi d'avoir configuré le déploiement sur 'Quiconque'.", false);
-            });
+            
+            if(password === "6734") {
+                showToast("Accès autorisé");
+                basculerVers('sec-dashboard');
+            } else {
+                showToast("Mot de passe incorrect", false);
+                document.getElementById('input-password').value = '';
+            }
         }
 
-        /* 🛡️ POINTAGE BORNE ÉCOLE */
+        /* 🛡️ 2. POINTAGE BORNE ÉCOLE AVEC RETOUR NOM ÉLÈVE */
         function soumettrePointage(event) {
             event.preventDefault();
             const input = document.getElementById('matricule-input');
             const btn = document.getElementById('btn-valider-pointage');
+            const feedbackBox = document.getElementById('borne-feedback-box');
+            const feedbackNom = document.getElementById('borne-feedback-nom');
+            const feedbackMatricule = document.getElementById('borne-feedback-matricule');
             const matricule = input.value.trim().toUpperCase();
 
             if(!matricule) return;
             btn.disabled = true;
             btn.innerHTML = "Transmission...";
 
-            fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors', // Évite le blocage de retour de flux sur Google Sheets
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'pointage', matricule: matricule })
+            // Première requête GET rapide pour récupérer le nom de l'élève en direct pour le garde
+            fetch(API_URL + `?matricule=${encodeURIComponent(matricule)}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    // Affichage immédiat du nom de l'élève à l'écran du garde
+                    feedbackNom.innerText = data.eleve;
+                    feedbackMatricule.innerText = `Code : ${matricule}`;
+                    feedbackBox.classList.remove('hidden-section');
+                    
+                    // Deuxième envoi synchrone de l'historique de pointage
+                    return fetch(API_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'pointage', matricule: matricule })
+                    });
+                } else {
+                    throw new Error(data.message || "Élève introuvable");
+                }
             })
             .then(() => {
                 showToast(`Enregistrement envoyé : ${matricule}`);
-                suivantBorne();
+                input.value = '';
+                btn.disabled = false;
+                btn.innerHTML = "Valider et Enregistrer";
+                input.focus();
             })
-            .catch(() => {
-                showToast("Erreur réseau", false);
+            .catch((err) => {
+                showToast(err.message || "Erreur réseau", false);
                 btn.disabled = false;
                 btn.innerHTML = "Valider et Enregistrer";
             });
@@ -220,6 +242,7 @@
 
         function effacerBorne() {
             document.getElementById('matricule-input').value = '';
+            document.getElementById('borne-feedback-box').classList.add('hidden-section');
             document.getElementById('btn-valider-pointage').disabled = false;
             document.getElementById('btn-valider-pointage').innerHTML = "Valider et Enregistrer";
             document.getElementById('matricule-input').focus();
@@ -229,7 +252,7 @@
             effacerBorne();
         }
 
-        /* 📱 ESPACE PARENT */
+        /* 📱 3. ESPACE PARENT */
         function rechercherFicheParent() {
             const input = document.getElementById('parent-matricule-search');
             const btn = document.getElementById('btn-parent-search');
@@ -253,7 +276,6 @@
                     return;
                 }
 
-                // Si l'abonnement calculé est expiré
                 if(data.statutAbonnement === "Inactif") {
                     document.getElementById('parent-lock-screen').classList.remove('hidden-section');
                     return;
@@ -261,7 +283,6 @@
 
                 document.getElementById('parent-nom-eleve').innerText = data.eleve;
                 
-                // Historique immédiat
                 if(data.presences && data.presences.length > 0) {
                     const derniere = data.presences[0];
                     const dateObj = new Date(derniere.dateHeure);
@@ -272,7 +293,6 @@
                     document.getElementById('parent-date-arrivee').innerText = "Aucune entrée enregistrée aujourd'hui";
                 }
 
-                // Chargement des communiqués
                 const containerCom = document.getElementById('parent-container-communiques');
                 containerCom.innerHTML = "";
                 if(data.communiques && data.communiques.length > 0) {
@@ -299,6 +319,41 @@
                 showToast("Erreur lors du traitement des données", false);
             });
         }
+
+        /* 🔒 4. SYSTÈME DE BLOCAGE DE SÉCURITÉ (ANTI-F12, CTRL+U, CLIC DROIT) */
+        // Désactivation du clic droit
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Désactivation des raccourcis clavier inspecteur et source
+        document.addEventListener('keydown', function(e) {
+            // Empêcher F12
+            if (e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+            // Empêcher Ctrl+Shift+I (Inspecter)
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                e.preventDefault();
+                return false;
+            }
+            // Empêcher Ctrl+Shift+J (Console)
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+                e.preventDefault();
+                return false;
+            }
+            // Empêcher Ctrl+U (Code source)
+            if (e.ctrlKey && e.keyCode === 85) {
+                e.preventDefault();
+                return false;
+            }
+            // Empêcher Ctrl+S (Sauvegarder la page)
+            if (e.ctrlKey && e.keyCode === 83) {
+                e.preventDefault();
+                return false;
+            }
+        });
     </script>
 </body>
 </html>
