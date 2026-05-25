@@ -10,7 +10,7 @@
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: #f8fafc; 
-            -webkit-user-select: none; /* Désactive la sélection de texte */
+            -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
@@ -21,9 +21,12 @@
 </head>
 <body class="antialiased text-slate-800">
 
+    <!-- Conteneur pour les Notifications Toast -->
     <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-sm pointer-events-none"></div>
 
-    <!-- SECTION 1 : LOGIN -->
+    <!-- ========================================== -->
+    <!-- SECTION 1 : CONNEXION                      -->
+    <!-- ========================================== -->
     <section id="sec-login" class="min-h-screen flex flex-col items-center justify-center p-4">
         <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-6 text-center">
             <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">O</div>
@@ -42,7 +45,9 @@
         </div>
     </section>
 
-    <!-- SECTION 2 : DASHBOARD -->
+    <!-- ========================================== -->
+    <!-- SECTION 2 : MENU PRINCIPAL (DASHBOARD)     -->
+    <!-- ========================================== -->
     <section id="sec-dashboard" class="min-h-screen hidden-section p-4 max-w-md mx-auto flex flex-col justify-center">
         <div class="text-center mb-8">
             <h2 class="text-2xl font-bold text-slate-900">Bienvenue sur OptiSchool</h2>
@@ -68,7 +73,9 @@
         </div>
     </section>
 
-    <!-- SECTION 3 : BORNE GUÉRITE (MODIFIÉE) -->
+    <!-- ========================================== -->
+    <!-- SECTION 3 : BORNE GUÉRITE                 -->
+    <!-- ========================================== -->
     <section id="sec-borne" class="min-h-screen hidden-section p-4 max-w-md mx-auto flex flex-col">
         <div class="flex items-center justify-between py-4 border-b border-slate-100 mb-6">
             <button onclick="basculerVers('sec-dashboard')" class="text-sm font-medium text-slate-500 hover:text-slate-800">← Menu Principal</button>
@@ -82,7 +89,7 @@
                 <p class="text-xs text-slate-500 mt-1">Saisissez le matricule de l'élève qui se présente.</p>
             </div>
 
-            <!-- CADRE D'AFFICHAGE DU SCAN EN DIRECT -->
+            <!-- Retour d'information en direct sur le nom de l'élève -->
             <div id="borne-feedback-box" class="hidden-section my-4 p-4 rounded-xl border border-emerald-100 bg-emerald-50/50 text-center animate-pulse">
                 <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Dernier scan validé</p>
                 <h4 id="borne-feedback-nom" class="text-lg font-bold text-slate-900 mt-1">-</h4>
@@ -99,7 +106,7 @@
 
             <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-50">
                 <button onclick="effacerBorne()" class="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-xl transition-all">
-                    ↺ Effacer / Retour
+                    ↺ Effacer
                 </button>
                 <button onclick="suivantBorne()" class="py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium text-sm rounded-xl transition-all">
                     Élève Suivant →
@@ -108,7 +115,9 @@
         </div>
     </section>
 
-    <!-- SECTION 4 : ESPACE PARENT -->
+    <!-- ========================================== -->
+    <!-- SECTION 4 : ESPACE PARENT                  -->
+    <!-- ========================================== -->
     <section id="sec-parent" class="min-h-screen hidden-section p-4 max-w-md mx-auto flex flex-col">
         <div class="flex items-center justify-between py-4 border-b border-slate-100 mb-6">
             <button onclick="basculerVers('sec-dashboard')" class="text-sm font-medium text-slate-500 hover:text-slate-800">← Menu Principal</button>
@@ -123,6 +132,7 @@
             </div>
         </div>
 
+        <!-- Écran de verrouillage si abonnement expiré -->
         <div id="parent-lock-screen" class="hidden-section bg-white rounded-2xl shadow-sm border border-rose-100 p-8 text-center my-auto space-y-4">
             <div class="text-4xl">🔒</div>
             <h3 class="text-lg font-bold text-rose-600">Accès Interrompu</h3>
@@ -133,6 +143,7 @@
             </a>
         </div>
 
+        <!-- Données et Communiqués de l'élève -->
         <div id="parent-data-box" class="hidden-section flex-1 flex flex-col space-y-6">
             <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
                 <div>
@@ -148,18 +159,21 @@
                 <p id="parent-date-arrivee" class="text-xs text-slate-500">-</p>
             </div>
 
+            <!-- SECTION REPRISE EN BAS : AFFICHAGE DES COMMUNIQUÉS DE L'ÉCOLE -->
             <div class="flex-1 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
                 <h4 class="font-bold text-slate-900 text-sm border-b border-slate-100 pb-3 mb-4">📢 Communiqués de l'Établissement</h4>
-                <div id="parent-container-communiques" class="space-y-4 overflow-y-auto flex-1 max-h-60 text-left"></div>
+                <div id="parent-container-communiques" class="space-y-4 overflow-y-auto flex-1 max-h-60 text-left">
+                    <!-- Les communiqués chargés depuis Sheets s'insèrent ici -->
+                </div>
             </div>
         </div>
     </section>
 
     <script>
-        // 🔗 URL de ton déploiement Google Apps Script
-        const API_URL = "https://script.google.com/macros/s/AKfycbwRN9h76Okbc6WesKngTUuG4NkinoKZuhvlqB9yBBo6hY1GYn1pb6L3WaHwbInjhsxa/exec";
+        // 🔗 URL de ton nouveau déploiement Google Apps Script mis à jour
+        const API_URL = "https://script.google.com/macros/s/AKfycbxNUOAZtDCsGtdXLICWaipKHx2vkZGUmf6n8_aVfVt6FZ_1_W2b0zpz9yVA8fKEvcg07A/exec";
 
-        // Toasts d'alerte visuelle
+        // Affichage des notifications d'alertes visuelles
         function showToast(message, isSuccess = true) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -169,7 +183,7 @@
             setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-10px)'; setTimeout(() => toast.remove(), 300); }, 3500);
         }
 
-        // Navigation
+        // Changement d'onglet
         function basculerVers(idSection) {
             ['sec-login', 'sec-dashboard', 'sec-borne', 'sec-parent'].forEach(id => {
                 document.getElementById(id).classList.add('hidden-section');
@@ -177,11 +191,10 @@
             document.getElementById(idSection).classList.remove('hidden-section');
         }
 
-        /* 🔐 1. VÉRIFICATION DU MOT DE PASSE (LOCAL EN 6734) */
+        /* 🔐 1. VÉRIFICATION CODE SECRET */
         function verifierMotDePasse(event) {
             event.preventDefault();
             const password = document.getElementById('input-password').value;
-            
             if(password === "6734") {
                 showToast("Accès autorisé");
                 basculerVers('sec-dashboard');
@@ -191,7 +204,7 @@
             }
         }
 
-        /* 🛡️ 2. POINTAGE BORNE ÉCOLE AVEC RETOUR NOM ÉLÈVE */
+        /* 🛡️ 2. ENVOI SCAN BORNE (HISTORIQUE ET FEEDBACK NOM EN DIRECT) */
         function soumettrePointage(event) {
             event.preventDefault();
             const input = document.getElementById('matricule-input');
@@ -203,19 +216,19 @@
 
             if(!matricule) return;
             btn.disabled = true;
-            btn.innerHTML = "Transmission...";
+            btn.innerHTML = "Traitement en cours...";
 
-            // Première requête GET rapide pour récupérer le nom de l'élève en direct pour le garde
+            // Appel de l'API pour récupérer d'abord le nom de l'élève
             fetch(API_URL + `?matricule=${encodeURIComponent(matricule)}`)
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
-                    // Affichage immédiat du nom de l'élève à l'écran du garde
+                    // On affiche tout de suite le nom complet de l'élève sur la borne
                     feedbackNom.innerText = data.eleve;
                     feedbackMatricule.innerText = `Code : ${matricule}`;
                     feedbackBox.classList.remove('hidden-section');
                     
-                    // Deuxième envoi synchrone de l'historique de pointage
+                    // Envoi synchrone des données vers doPost pour insertion dans "Historique"
                     return fetch(API_URL, {
                         method: 'POST',
                         mode: 'no-cors',
@@ -227,14 +240,14 @@
                 }
             })
             .then(() => {
-                showToast(`Enregistrement envoyé : ${matricule}`);
+                showToast(`Enregistré avec succès !`);
                 input.value = '';
                 btn.disabled = false;
                 btn.innerHTML = "Valider et Enregistrer";
                 input.focus();
             })
             .catch((err) => {
-                showToast(err.message || "Erreur réseau", false);
+                showToast(err.message || "Erreur de connexion", false);
                 btn.disabled = false;
                 btn.innerHTML = "Valider et Enregistrer";
             });
@@ -252,7 +265,7 @@
             effacerBorne();
         }
 
-        /* 📱 3. ESPACE PARENT */
+        /* 📱 3. RECHERCHE PARENT AVEC CHARGEMENT AUTOMATIQUE DES COMMUNIQUÉS */
         function rechercherFicheParent() {
             const input = document.getElementById('parent-matricule-search');
             const btn = document.getElementById('btn-parent-search');
@@ -276,30 +289,35 @@
                     return;
                 }
 
+                // Vérification du statut d'abonnement actif ou inactif
                 if(data.statutAbonnement === "Inactif") {
                     document.getElementById('parent-lock-screen').classList.remove('hidden-section');
                     return;
                 }
 
+                // Affichage du nom complet de l'élève
                 document.getElementById('parent-nom-eleve').innerText = data.eleve;
                 
+                // Gestion de l'affichage de la dernière date et heure d'arrivée
                 if(data.presences && data.presences.length > 0) {
                     const derniere = data.presences[0];
                     const dateObj = new Date(derniere.dateHeure);
                     document.getElementById('parent-heure-arrivee').innerText = dateObj.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
-                    document.getElementById('parent-date-arrivee').innerText = "Arrivé le " + dateObj.toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'});
+                    document.getElementById('parent-date-arrivee').innerText = "Arrivé(e) le " + dateObj.toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'});
                 } else {
                     document.getElementById('parent-heure-arrivee').innerText = "--:--";
-                    document.getElementById('parent-date-arrivee').innerText = "Aucune entrée enregistrée aujourd'hui";
+                    document.getElementById('parent-date-arrivee').innerText = "Aucun pointage aujourd'hui";
                 }
 
+                // Récupération et injection des communiqués de l'école (Date, Titre, Message) reçu du serveur
                 const containerCom = document.getElementById('parent-container-communiques');
                 containerCom.innerHTML = "";
+                
                 if(data.communiques && data.communiques.length > 0) {
                     data.communiques.forEach(com => {
                         const dateCom = new Date(com.date).toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'});
                         containerCom.innerHTML += `
-                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-left">
                                 <div class="flex justify-between items-center mb-1">
                                     <h5 class="font-bold text-xs text-slate-800">${com.titre}</h5>
                                     <span class="text-[10px] text-slate-400">${dateCom}</span>
@@ -308,7 +326,7 @@
                             </div>`;
                     });
                 } else {
-                    containerCom.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Aucun communiqué officiel récent.</p>`;
+                    containerCom.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Aucun communiqué officiel à afficher.</p>`;
                 }
 
                 document.getElementById('parent-data-box').classList.remove('hidden-section');
@@ -316,40 +334,18 @@
             .catch(() => {
                 btn.disabled = false;
                 btn.innerHTML = "Rechercher";
-                showToast("Erreur lors du traitement des données", false);
+                showToast("Erreur lors de la récupération des données", false);
             });
         }
 
-        /* 🔒 4. SYSTÈME DE BLOCAGE DE SÉCURITÉ (ANTI-F12, CTRL+U, CLIC DROIT) */
-        // Désactivation du clic droit
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-
-        // Désactivation des raccourcis clavier inspecteur et source
+        /* 🔒 4. SYSTEME ANTI-FRAUDE & SECURITE DE LA PAGE */
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
         document.addEventListener('keydown', function(e) {
-            // Empêcher F12
-            if (e.keyCode === 123) {
-                e.preventDefault();
-                return false;
-            }
-            // Empêcher Ctrl+Shift+I (Inspecter)
-            if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
-                e.preventDefault();
-                return false;
-            }
-            // Empêcher Ctrl+Shift+J (Console)
-            if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
-                e.preventDefault();
-                return false;
-            }
-            // Empêcher Ctrl+U (Code source)
-            if (e.ctrlKey && e.keyCode === 85) {
-                e.preventDefault();
-                return false;
-            }
-            // Empêcher Ctrl+S (Sauvegarder la page)
-            if (e.ctrlKey && e.keyCode === 83) {
+            if (e.keyCode === 123 || 
+                (e.ctrlKey && e.shiftKey && e.keyCode === 73) || 
+                (e.ctrlKey && e.shiftKey && e.keyCode === 74) || 
+                (e.ctrlKey && e.keyCode === 85) || 
+                (e.ctrlKey && e.keyCode === 83)) {
                 e.preventDefault();
                 return false;
             }
