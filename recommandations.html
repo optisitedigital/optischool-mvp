@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinSanté | Recommandations</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- STYLE PREMIUM (IDENTIQUE AUX AUTRES PAGES) --- */
+        :root { --primary: #0284c7; --secondary: #0ea5e9; --dark: #0f172a; --light: #f8fafc; --white: #ffffff; --gray: #64748b; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--light); color: var(--dark); line-height: 1.6; }
+
+        /* --- HEADER (UNIFIÉ) --- */
+        header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .logo { font-weight: 800; font-size: 1.6rem; color: var(--primary); }
+        .nav-links { display: flex; list-style: none; gap: 30px; }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; font-size: 0.9rem; }
+        .hamburger { display: none; font-size: 24px; cursor: pointer; color: var(--primary); }
+
+        /* --- SECTION CONTENU --- */
+        .page-title { text-align: center; margin: 50px 0 10px; font-size: 2.5rem; }
+        .subtitle { text-align: center; color: var(--gray); margin-bottom: 40px; }
+
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; padding: 20px 5%; max-width: 1200px; margin: 0 auto 50px; }
+        
+        .card { background: var(--white); border-radius: 24px; padding: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); position: relative; }
+        
+        /* Badge "Certifié" pour la confiance */
+        .badge-verified { background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-block; margin-bottom: 15px; }
+        
+        .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 16px; margin-bottom: 20px; }
+        .card h3 { font-size: 1.3rem; margin-bottom: 10px; }
+        .btn-cta { background: var(--primary); color: white; display: block; text-align: center; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 700; margin-top: 15px; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; flex-direction: column; position: absolute; top: 80px; left: 0; width: 100%; background: white; padding: 40px; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+            .nav-links.active { display: flex; gap: 25px; }
+            .hamburger { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">KinSanté</div>
+        <div class="hamburger" onclick="document.getElementById('nav').classList.toggle('active')"><i class="fas fa-bars"></i></div>
+        <nav>
+            <ul class="nav-links" id="nav">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="sante.html">Santé</a></li>
+                <li><a href="medicaments.html">Médicaments</a></li>
+                <li><a href="recommandations.html">Recommandés</a></li>
+                <li><a href="communique.html">Communiqués</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1 class="page-title">Nos Recommandations</h1>
+        <p class="subtitle">Les professionnels et établissements certifiés par KinSanté.</p>
+
+        <div class="grid-container">
+            <div class="card">
+                <span class="badge-verified"><i class="fas fa-check-circle"></i> Certifié KinSanté</span>
+                <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500" alt="Clinique">
+                <h3>Centre Médical Ngaliema</h3>
+                <p>Spécialisé en urgences et soins pédiatriques.</p>
+                <a href="tel:+243..." class="btn-cta">Appeler maintenant</a>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
