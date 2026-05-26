@@ -122,6 +122,8 @@
         }
 
         .logo span { color: var(--accent); }
+        
+        /* Style du logo pour assurer sa visibilité sur le navigateur */
         .logo img {
             width: 42px;
             height: 42px;
@@ -129,6 +131,7 @@
             border-radius: 50%;
             box-shadow: 0 4px 12px rgba(0, 86, 179, 0.15);
             border: 2px solid white;
+            display: block;
         }
 
         /* HAMBURGER */
@@ -237,7 +240,7 @@
 
         @keyframes cinemaReveal { to { opacity: 1; transform: translateY(0); } }
 
-        /* CONTROLES TRÉGULIERS */
+        /* CONTROLES */
         .controls-wrapper {
             max-width: 640px;
             margin: 0 auto 45px;
@@ -268,7 +271,7 @@
         #searchBar:focus { border-color: rgba(0, 86, 179, 0.25); background: white; box-shadow: 0 15px 35px rgba(0, 86, 179, 0.06); }
         .search-container i { position: absolute; left: 24px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 1.15rem; }
 
-        /* BOUTON LANCEUR GOOGLE MAPS DIRECT */
+        /* BOUTON RECHERCHE GPS MAPS APP */
         .btn-map-trigger {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: white;
@@ -293,27 +296,6 @@
         }
 
         .btn-map-trigger i { font-size: 1.1rem; color: var(--accent); }
-
-        /* CONTENEUR EMBED GOOGLE MAPS PROPRE */
-        .map-section-container {
-            max-width: 1140px;
-            margin: 0 auto 50px;
-            height: 0;
-            opacity: 0;
-            overflow: hidden;
-            transition: all 0.6s cubic-bezier(0.1, 0.8, 0.2, 1);
-            border-radius: 28px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
-            border: 1px solid var(--border);
-        }
-
-        .map-section-container.open {
-            height: 500px;
-            opacity: 1;
-            margin-bottom: 55px;
-        }
-
-        #googleMapsIframe { width: 100%; height: 100%; border: none; }
 
         /* GRILLE DE CATALOGUE */
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 30px; }
@@ -391,7 +373,6 @@
             main { padding: 55px 16px 60px; }
             .grid-container { gap: 20px; }
             .card { padding: 22px; border-radius: 22px; }
-            .map-section-container.open { height: 380px; }
         }
     </style>
 </head>
@@ -440,12 +421,8 @@
         </div>
         
         <button class="btn-map-trigger" id="mapTriggerBtn" onclick="openGoogleMapsEmbed()">
-            <i class="fas fa-map-marked-alt"></i> Ouvrir Google Maps : Hôpitaux à proximité
+            <i class="fas fa-map-marked-alt"></i> Localiser les Établissements de Santé autour de moi
         </button>
-    </div>
-
-    <div class="map-section-container" id="mapSection">
-        <iframe id="googleMapsIframe" src="" allowfullscreen="" loading="lazy"></iframe>
     </div>
 
     <div class="grid-container" id="annuaireList">
@@ -464,7 +441,7 @@
 <button id="top" aria-label="Retour en haut de page"><i class="fa fa-arrow-up"></i></button>
 
 <script>
-// 1. LOADER 
+// 1. LOADER
 window.addEventListener("DOMContentLoaded", () => {
     const loader = document.getElementById("loader");
     setTimeout(() => { loader.style.opacity = "0"; loader.style.visibility = "hidden"; }, 500);
@@ -483,7 +460,7 @@ function toggleMenu() {
 hamburgerBtn.addEventListener("click", toggleMenu);
 menuOverlay.addEventListener("click", toggleMenu);
 
-// 3. FONCTION FILTRE DE TEXTE
+// 3. FONCTION FILTRE DE RECHERCHE
 function filterAnnuaire() {
     let input = document.getElementById('searchBar').value.toLowerCase().trim();
     let cards = document.querySelectorAll('#annuaireList .card');
@@ -502,55 +479,38 @@ function filterAnnuaire() {
     noResults.style.display = (visibleCount === 0 && input !== "") ? "block" : "none";
 }
 
-// 4. L'INGÉNIOSITÉ GOOGLE MAPS SANS FRAIS NI CLÉ API REQUUISE
+// 4. OUVERTURE DIRECTE DE GOOGLE MAPS APP AVEC RECHERCHE GLOBALE SANTÉ (POINT BLEU ACTIF)
 function openGoogleMapsEmbed() {
-    const mapSection = document.getElementById("mapSection");
-    const mapIframe = document.getElementById("googleMapsIframe");
     const mapBtn = document.getElementById("mapTriggerBtn");
+    mapBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Récupération du GPS...';
 
-    // Si la carte est déjà ouverte, on la ferme
-    if(mapSection.classList.contains("open")) {
-        mapSection.classList.remove("open");
-        mapIframe.src = ""; // Coupe le chargement en arrière-plan
-        mapBtn.innerHTML = '<i class="fas fa-map-marked-alt"></i> Ouvrir Google Maps : Hôpitaux à proximité';
-        return;
-    }
-
-    mapBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Initialisation de Google Maps...';
-
-    // Demander la géolocalisation de l'utilisateur
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
 
-                // Construction de l'URL Google Maps Embed officielle avec recherche ciblée sur Hôpital/Hospitals
-                // Le mot clé "hospital" force l'affichage immédiat des marqueurs rouges Google Maps
-                const googleEmbedUrl = `https://maps.google.com/maps?q=hospital&t=&z=14&ie=UTF8&iwloc=&output=embed&ll=${lat},${lng}`;
+                // Requête élargie avec opérateurs logiques pour tout afficher d'un coup
+                const searchQueries = "hopital+OR+clinique+OR+pharmacie+OR+laboratoire";
+                const googleMapsAppUrl = `https://maps.google.com/maps?q=hospital&t=&z=14&ie=UTF8&iwloc=&output=embed&ll=$7{searchQueries}/@${lat},${lng},14z`;
 
-                // Injecte l'Iframe Google Maps et anime l'ouverture du panneau
-                mapIframe.src = googleEmbedUrl;
-                mapSection.classList.add("open");
-                mapBtn.innerHTML = '<i class="fas fa-compress-alt"></i> Masquer Google Maps';
+                window.open(googleMapsAppUrl, '_blank');
+                mapBtn.innerHTML = '<i class="fas fa-map-marked-alt"></i> Localiser les Établissements de Santé autour de moi';
             },
             (error) => {
-                // Secours si l'utilisateur refuse la localisation ou si le GPS est éteint : On centre par défaut sur Kinshasa centre
-                const defaultLat = -4.325;
-                const defaultLng = 15.315;
-                const googleEmbedUrl = `https://maps.google.com/maps?q=hospital&t=&z=13&ie=UTF8&iwloc=&output=embed&ll=${defaultLat},${defaultLng}`;
-                
-                mapIframe.src = googleEmbedUrl;
-                mapSection.classList.add("open");
-                mapBtn.innerHTML = '<i class="fas fa-compress-alt"></i> Masquer Google Maps';
-            }
+                console.warn("GPS désactivé. Ouverture centrée sur Kinshasa.");
+                const fallbackUrl = "https://maps.google.com/maps?q=hospital&t=&z=14&ie=UTF8&iwloc=&output=embed&ll=$8";
+                window.open(fallbackUrl, '_blank');
+                mapBtn.innerHTML = '<i class="fas fa-map-marked-alt"></i> Localiser les Établissements de Santé autour de moi';
+            },
+            { enableHighAccuracy: true, timeout: 6000 }
         );
     } else {
-        alert("La navigation géolocalisée n'est pas supportée par ce navigateur.");
+        window.open("https://maps.google.com/maps?q=hospital&t=&z=14&ie=UTF8&iwloc=&output=embed&ll=$8", '_blank');
     }
 }
 
-// 5. ANIMATION DES CARTES
+// 5. ANIMATION DES CARTES AU DEFILEMENT
 const cards = document.querySelectorAll(".card");
 const observerOptions = { root: null, threshold: 0.02 };
 const cardObserver = new IntersectionObserver((entries, observer) => {
@@ -563,7 +523,7 @@ const cardObserver = new IntersectionObserver((entries, observer) => {
 }, observerOptions);
 cards.forEach(card => cardObserver.observe(card));
 
-// 6. GLOW SOURIS
+// 6. EFFET DE LUMIERE SOURIS (GLOW SUR CARTES)
 cards.forEach(card => {
     card.addEventListener("mousemove", (e) => {
         const rect = card.getBoundingClientRect();
@@ -572,13 +532,43 @@ cards.forEach(card => {
     });
 });
 
-// 7. GO TOP
+// 7. BOUTON RETOUR EN HAUT
 const topBtn = document.getElementById("top");
 window.addEventListener("scroll", () => {
     if (window.scrollY > 350) { topBtn.classList.add("visible"); } 
     else { topBtn.classList.remove("visible"); }
 });
 topBtn.addEventListener("click", () => { window.scrollTo({ top: 0, behavior: "smooth" }); });
+
+// 8. CODE DE PROTECTION : Bloque Clic Droit, Raccourcis Copie/Source et Sélection de Texte
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
+
+document.addEventListener('keydown', function(e) {
+    // Bloque la copie (Ctrl+C), Affichage code source (Ctrl+U), Sauvegarde (Ctrl+S)
+    if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'C' || e.key === 'U' || e.key === 'S')) {
+        e.preventDefault();
+        return false;
+    }
+    // Bloque l'inspecteur d'élément (Ctrl+Shift+I ou J)
+    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) {
+        e.preventDefault();
+        return false;
+    }
+    // Bloque F12
+    if (e.key === 'F12') {
+        e.preventDefault();
+        return false;
+    }
+});
+
+// Bloque la surbrillance / sélection de texte sauvage
+document.onselectstart = new Function ("return false");
+if (window.sidebar) {
+    document.onmousedown = function () { return false; };
+    document.onclick = function () { return true; };
+}
 </script>
 
 </body>
