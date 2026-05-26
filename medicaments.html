@@ -2,131 +2,710 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title>KinSanté | Catalogue des Médicaments</title>
+
+    <meta name="description" content="Recherchez et commandez vos médicaments et produits de santé en ligne à Kinshasa via KinSanté RDC.">
+    <meta name="keywords" content="KinSanté, médicaments, pharmacie Kinshasa, commander paracetamol, santé RDC">
+    <meta name="author" content="KinSanté RDC">
+    <meta name="theme-color" content="#0056b3">
+
+    <link rel="icon" type="image/png" href="logo-kinsante.png">
+    <link rel="apple-touch-icon" href="logo-kinsante.png">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        /* --- VARIABLES GLOBALES --- */
         :root {
-            --primary: #0284c7;
-            --secondary: #0ea5e9;
-            --dark: #0f172a;
-            --light: #f8fafc;
-            --white: #ffffff;
-            --gray: #64748b;
+            --primary: #0056b3;
+            --primary-glow: rgba(0, 86, 179, 0.08);
+            --accent: #0ea5e9;
+            --accent-glow: rgba(14, 165, 233, 0.15);
+            --success: #10b981;
+            --bg: #f8fafc; 
+            --surface: rgba(255, 255, 255, 0.7); 
+            --surface-hover: rgba(255, 255, 255, 0.9);
+            --border: rgba(0, 86, 179, 0.08);
+            --text: #0f172a; 
+            --muted: #64748b;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--light); color: var(--dark); line-height: 1.6; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
 
-        /* --- NAVIGATION (COMMUNE) --- */
-        header { 
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; 
-            position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05);
+        html {
+            scroll-behavior: smooth;
+            background-color: var(--bg);
         }
-        .logo { font-weight: 800; font-size: 1.6rem; color: var(--primary); letter-spacing: -1px; }
-        .nav-links { display: flex; list-style: none; gap: 30px; }
-        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; font-size: 0.9rem; transition: 0.3s; }
-        .nav-links a:hover { color: var(--primary); }
-        .hamburger { display: none; font-size: 24px; cursor: pointer; color: var(--primary); }
 
-        /* --- TITRE DE PAGE --- */
-        .page-title { 
-            text-align: center; margin-top: 50px; margin-bottom: 10px; 
-            font-size: 2.5rem; color: var(--dark); letter-spacing: -1px; 
+        body {
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
-        .subtitle { text-align: center; color: var(--gray); margin-bottom: 30px; }
 
-        /* --- RECHERCHE --- */
-        .search-container { max-width: 600px; margin: 0 auto 40px auto; padding: 0 20px; }
-        #searchInput { 
-            width: 100%; padding: 18px 25px; border-radius: 50px; 
-            border: 2px solid transparent; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            font-size: 1rem; outline: none; transition: 0.3s; background: white;
+        /* LIGHT AMBIENT GLOW EFFECT */
+        .ambient-glow {
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.12) 0%, transparent 65%);
+            z-index: -1;
+            pointer-events: none;
+            filter: blur(60px);
         }
-        #searchInput:focus { border-color: var(--primary); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
 
-        /* --- GRILLE --- */
-        .grid-container { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-            gap: 30px; padding: 20px 5%; max-width: 1200px; margin: 0 auto 50px;
+        /* LOADER PREMIUM MINIMALISTE */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
         }
-        .card { 
-            background: var(--white); border-radius: 24px; padding: 25px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.03); transition: 0.3s; border: 1px solid rgba(0,0,0,0.03);
-            display: flex; flex-direction: column;
+        
+        .spinner-box {
+            position: relative;
+            width: 56px;
+            height: 56px;
         }
-        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
-        .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 16px; margin-bottom: 20px; }
-        .card h3 { font-size: 1.3rem; margin-bottom: 10px; }
-        .card p { color: var(--gray); font-size: 0.9rem; margin-bottom: 20px; flex-grow: 1; }
-        .btn-cta { 
-            background: var(--primary); color: white; text-align: center; 
-            padding: 15px; border-radius: 12px; text-decoration: none; 
-            font-weight: 700; transition: 0.3s;
-        }
-        .btn-cta:hover { background: var(--secondary); }
 
-        /* --- RESPONSIVE --- */
-        @media (max-width: 768px) {
-            .nav-links { 
-                display: none; flex-direction: column; position: absolute; top: 80px; left: 0; 
-                width: 100%; background: white; padding: 40px; text-align: center;
-                box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            }
-            .nav-links.active { display: flex; gap: 25px; }
-            .hamburger { display: block; }
-            .page-title { font-size: 1.8rem; }
+        .spinner {
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(0, 86, 179, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* HEADER STICKY BLANC GLASSMORPHISM */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 5%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .logo img {
+            width: 42px;
+            height: 42px;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.15);
+            border: 2px solid white;
+        }
+
+        /* BOUTON HAMBURGER (TRAITS INTERACTIFS) */
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 26px;
+            height: 18px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hamburger span {
+            display: block;
+            width: 100%;
+            height: 2.5px;
+            background-color: var(--primary);
+            border-radius: 4px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: left center;
+        }
+
+        .hamburger.open span:nth-child(1) {
+            transform: rotate(45deg) translateY(-2px);
+            background-color: var(--text);
+        }
+
+        .hamburger.open span:nth-child(2) {
+            width: 0%;
+            opacity: 0;
+        }
+
+        .hamburger.open span:nth-child(3) {
+            transform: rotate(-45deg) translateY(2px);
+            background-color: var(--text);
+        }
+
+        /* DRAWER MENU LATÉRAL */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -100%; 
+            width: 340px;
+            max-width: 85%;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.05);
+            border-left: 1px solid rgba(255, 255, 255, 0.4);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            padding: 100px 40px 40px;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .side-menu.active {
+            right: 0; 
+        }
+
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.15);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-links li {
+            width: 100%;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .side-menu.active .nav-links li {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .side-menu.active .nav-links li:nth-child(1) { transition-delay: 0.1s; }
+        .side-menu.active .nav-links li:nth-child(2) { transition-delay: 0.15s; }
+        .side-menu.active .nav-links li:nth-child(3) { transition-delay: 0.2s; }
+        .side-menu.active .nav-links li:nth-child(4) { transition-delay: 0.25s; }
+        .side-menu.active .nav-links li:nth-child(5) { transition-delay: 0.3s; }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-radius: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-links a::after {
+            content: "\f105";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            transform: translateX(-5px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary);
+            background: rgba(0, 86, 179, 0.05);
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        /* MAIN ZONE */
+        main {
+            padding: 80px 5% 80px;
+            max-width: 1250px;
+            margin: auto;
+        }
+
+        /* HERO ZONE */
+        .page-title {
+            font-size: clamp(2.3rem, 7vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary) 20%, var(--accent) 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: cinemaReveal 0.8s cubic-bezier(0.1, 0.8, 0.2, 1) forwards 0.2s;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--muted);
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 400;
+            margin-bottom: 45px;
+            opacity: 0;
+            transform: translateY(15px);
+            animation: cinemaReveal 0.8s cubic-bezier(0.1, 0.8, 0.2, 1) forwards 0.3s;
+        }
+
+        @keyframes cinemaReveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* RECHERCHE PREMIUM */
+        .search-container {
+            max-width: 640px;
+            margin: 0 auto 55px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(15px);
+            animation: cinemaReveal 0.8s cubic-bezier(0.1, 0.8, 0.2, 1) forwards 0.4s;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 18px 28px 18px 60px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 86, 179, 0.03);
+            font-size: 1.05rem;
+            color: var(--text);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #searchInput:focus {
+            border-color: rgba(0, 86, 179, 0.25);
+            background: #ffffff;
+            box-shadow: 0 15px 35px rgba(0, 86, 179, 0.08);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 1.15rem;
+            pointer-events: none;
+            transition: color 0.3s ease;
+        }
+
+        .search-container #searchInput:focus + i {
+            color: var(--primary);
+        }
+
+        /* GRILLE DE CATALOGUE COMPLET */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 26px;
+            padding: 26px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 86, 179, 0.02);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.1, 0.8, 0.2, 1), 
+                        border-color 0.4s, 
+                        box-shadow 0.4s,
+                        background 0.4s;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .card.reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mouse Glow tracker */
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(14, 165, 233, 0.08), transparent 50%);
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(0, 86, 179, 0.2);
+            background: var(--surface-hover);
+            box-shadow: 0 20px 40px rgba(0, 86, 179, 0.07);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+            position: relative;
+            z-index: 2;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover img {
+            transform: scale(1.02);
+        }
+
+        .card h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            flex-grow: 1;
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* BOUTON DE COMMANDE WHATSAPP PREMIUM */
+        .btn-cta {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 86, 179, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-cta i {
+            font-size: 1.1rem;
+        }
+
+        .btn-cta:hover {
+            background: #004494;
+            box-shadow: 0 6px 22px rgba(0, 86, 179, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* BACK TO TOP */
+        #top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            color: var(--primary);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.1, 0.8, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        #top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        #top:hover {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 86, 179, 0.2);
+        }
+
+        /* NO RESULTS STATE */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted);
+            font-size: 1.1rem;
+            display: none;
+        }
+
+        .no-results i {
+            font-size: 2.5rem;
+            color: rgba(0, 86, 179, 0.15);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* RESPONSIVE DESIGN MOBILE-FIRST */
+        @media(max-width: 768px) {
+            header { padding: 14px 24px; }
+            .side-menu { width: 300px; padding: 90px 24px 40px; }
+            main { padding: 55px 16px 60px; }
+            .grid-container { gap: 20px; }
+            .card { padding: 22px; border-radius: 22px; }
+            #searchInput { padding: 16px 20px 16px 52px; font-size: 1rem; border-radius: 16px; }
+            .search-container i { left: 20px; }
         }
     </style>
 </head>
+
 <body>
 
-    <header>
-        <div class="logo">KinSanté</div>
-        <div class="hamburger" onclick="document.getElementById('nav').classList.toggle('active')"><i class="fas fa-bars"></i></div>
-        <nav>
-            <ul class="nav-links" id="nav">
-                <li><a href="index.html">Accueil</a></li>
-                <li><a href="sante.html">Santé</a></li>
-                <li><a href="medicaments.html">Médicaments</a></li>
-                <li><a href="recommandations.html">Recommandés</a></li>
-                <li><a href="communique.html">Communiqués</a></li>
-            </ul>
-        </nav>
-    </header>
+<div class="ambient-glow"></div>
 
-    <main>
-        <h1 class="page-title">Catalogue des Médicaments</h1>
-        <p class="subtitle">Recherchez et commandez vos produits de santé facilement.</p>
+<div id="loader">
+    <div class="spinner-box">
+        <div class="spinner"></div>
+    </div>
+    <p style="margin-top: 18px; color: var(--muted); font-size: 0.9rem; font-weight: 500; letter-spacing: 0.3px;">Chargement KinSanté...</p>
+</div>
 
-        <div class="search-container">
-            <input type="text" id="searchInput" onkeyup="searchMed()" placeholder="Rechercher un médicament...">
+<header>
+    <div class="logo">
+        <img src="logo-kinsante.png" alt="KinSanté">
+        Kin<span>Santé</span> RDC
+    </div>
+
+    <div class="hamburger" id="hamburger-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="menu-overlay" id="menu-overlay"></div>
+
+    <nav class="side-menu" id="side-menu">
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="sante.html">Santé</a></li>
+            <li><a href="medicaments.html" class="active">Médicaments</a></li>
+            <li><a href="recommandations.html">Recommandés</a></li>
+            <li><a href="communique.html">Communiqués</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h1 class="page-title">Catalogue des Médicaments</h1>
+    <p class="subtitle">Recherchez et commandez vos produits de santé facilement.</p>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" onkeyup="searchMed()" placeholder="Rechercher un médicament...">
+        <i class="fas fa-search"></i>
+    </div>
+
+    <div class="grid-container" id="medList">
+        
+        <div class="no-results" id="noResultsState">
+            <i class="fas fa-capsules"></i>
+            Aucun médicament ne correspond à votre recherche.
         </div>
 
-        <div class="grid-container" id="medList">
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500" alt="Med">
-                <h3>Paracétamol 500mg</h3>
-                <p>Antalgique pour douleurs légères et fièvre.</p>
-                <a href="https://wa.me/243819679859" class="btn-cta">Commander</a>
-            </div>
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500" alt="Paracétamol">
+            <h3>Paracétamol 500mg</h3>
+            <p>Antalgique et antipyrétique recommandé pour calmer les douleurs légères à modérées et faire baisser la fièvre.</p>
+            <a href="https://wa.me/243819679859" class="btn-cta" target="_blank">
+                <i class="fab fa-whatsapp"></i> Commander
+            </a>
         </div>
-    </main>
 
-    <script>
-        // Fonction Recherche
-        function searchMed() {
-            let input = document.getElementById('searchInput').value.toLowerCase();
-            let cards = document.querySelectorAll('.card');
-            cards.forEach(card => {
-                let name = card.querySelector('h3').innerText.toLowerCase();
-                card.style.display = name.includes(input) ? "" : "none";
-            });
+        </div>
+</main>
+
+<button id="top" aria-label="Retour en haut de page"><i class="fa fa-arrow-up"></i></button>
+
+<script>
+// 1. GESTION DU LOADER MINIMALISTE
+window.addEventListener("DOMContentLoaded", () => {
+    const loader = document.getElementById("loader");
+    setTimeout(() => {
+        loader.style.opacity = "0";
+        loader.style.visibility = "hidden";
+    }, 500);
+});
+
+// 2. LOGIQUE DU MENU LATÉRAL PREMIUM (TRAITS TO DRAWER)
+const hamburgerBtn = document.getElementById("hamburger-btn");
+const sideMenu = document.getElementById("side-menu");
+const menuOverlay = document.getElementById("menu-overlay");
+
+function toggleMenu() {
+    hamburgerBtn.classList.toggle("open");
+    sideMenu.classList.toggle("active");
+    menuOverlay.classList.toggle("active");
+}
+
+hamburgerBtn.addEventListener("click", toggleMenu);
+menuOverlay.addEventListener("click", toggleMenu);
+
+// 3. FONCTION RECHERCHE AMÉLIORÉE AVEC ÉTAT VIDE
+function searchMed() {
+    let input = document.getElementById('searchInput').value.toLowerCase().trim();
+    let cards = document.querySelectorAll('.grid-container .card');
+    let noResults = document.getElementById('noResultsState');
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        let name = card.querySelector('h3').innerText.toLowerCase();
+        let desc = card.querySelector('p').innerText.toLowerCase();
+        
+        if (name.includes(input) || desc.includes(input)) {
+            card.style.display = "";
+            visibleCount++;
+        } else {
+            card.style.display = "none";
         }
-    </script>
+    });
+
+    // Affichage du message si aucun produit trouvé
+    noResults.style.display = (visibleCount === 0 && input !== "") ? "block" : "none";
+}
+
+// 4. ANIMATION REVEAL ON SCROLL POUR LES CARTES
+const cards = document.querySelectorAll(".card");
+const observerOptions = {
+    root: null,
+    threshold: 0.02,
+    rootMargin: "0px 0px -10px 0px"
+};
+
+const cardObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+            setTimeout(() => {
+                entry.target.classList.add("reveal");
+            }, index * 60);
+            observer.unobserve(entry.target);
+        }
+    });
+}, observerOptions);
+
+cards.forEach(card => cardObserver.observe(card));
+
+// 5. MICRO-INTERACTION MOUSE GLOW TRACKER
+cards.forEach(card => {
+    card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+    });
+});
+
+// 6. SMOOTH BACK TO TOP BUTTON
+const topBtn = document.getElementById("top");
+window.addEventListener("scroll", () => {
+    if (window.scrollY > 350) {
+        topBtn.classList.add("visible");
+    } else {
+        topBtn.classList.remove("visible");
+    }
+});
+
+topBtn.addEventListener("click", () => {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+});
+</script>
+
 </body>
 </html>
